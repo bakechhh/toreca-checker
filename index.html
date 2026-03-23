@@ -864,11 +864,12 @@ function createCardEl(card) {
   pip.textContent = card.rarity;
   div.appendChild(pip);
 
-  // Price badge (for cards worth ¥500+)
-  if (card.sell >= 500) {
+  // Price badge (show buy price if available, else sell price)
+  const badgePrice = card.buy || card.sell;
+  if (badgePrice) {
     const pb = document.createElement('span');
     pb.className = 'price-badge';
-    pb.textContent = fmtPrice(card.sell);
+    pb.textContent = fmtPrice(badgePrice);
     div.appendChild(pb);
   }
 
