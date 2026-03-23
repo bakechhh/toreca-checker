@@ -614,6 +614,7 @@ header {
 // CARD DATA
 // ─────────────────────────────
 const IMG_BASE = 'https://www.pokemon-card.com/ex/m4/assets/images/card/';
+const SNKR_BASE = 'https://cdn.snkrdunk.com/upload_bg_removed/';
 const RARITY_ORDER = { MUR:0, SAR:1, SR:2, AR:3, RR:4, R:5, U:6, C:7 };
 
 // Format: [no, file, name, rarity, buyPrice, sellPrice]
@@ -704,51 +705,51 @@ const CARDS_RAW = [
   ['082','082-m423k3p','バブル水エネルギー','R',0,30],
   ['083','083-m4k0f66','マグネット鋼エネルギー','R',0,30],
   // ── 084-095 AR (アートレア) ──
-  ['084',null,'ハリマロン','AR',200,500],
-  ['085',null,'フォッコ','AR',300,500],
-  ['086',null,'ケロマツ','AR',400,900],
-  ['087',null,'ゲコガシラ','AR',400,600],
-  ['088',null,'デンリュウ','AR',600,500],
-  ['089',null,'ゼルネアス','AR',400,500],
-  ['090',null,'ネンドール','AR',150,500],
-  ['091',null,'クロバット','AR',150,500],
-  ['092',null,'メタング','AR',150,450],
-  ['093',null,'ヌメイル','AR',150,450],
-  ['094',null,'ケンタロス','AR',200,450],
-  ['095',null,'ミルホッグ','AR',150,500],
+  ['084',SNKR_BASE+'d56d2905-a4cc-43d7-bf87-10299c2d8368.webp','ハリマロン','AR',200,500],
+  ['085',SNKR_BASE+'c0929ce0-e3c5-4dcf-92f9-aea5b824af06.webp','フォッコ','AR',300,500],
+  ['086',SNKR_BASE+'8fa125a7-5b5a-4fa2-86f0-07ce4712dd28.webp','ケロマツ','AR',400,900],
+  ['087',SNKR_BASE+'1f03dd60-aeb9-4850-a4bd-e5c8f507d823.webp','ゲコガシラ','AR',400,600],
+  ['088',SNKR_BASE+'6c2107fe-58c8-489c-92e9-9e387ee2b95e.webp','デンリュウ','AR',600,500],
+  ['089',SNKR_BASE+'eceb7c6d-6871-41a2-8474-5bf56f383752.webp','ゼルネアス','AR',400,500],
+  ['090',SNKR_BASE+'7bd2bb6f-63c2-49b8-b35e-ce95db51f540.webp','ネンドール','AR',150,500],
+  ['091',SNKR_BASE+'178e0cbd-3e49-4385-985c-84feb57e3717.webp','クロバット','AR',150,500],
+  ['092',SNKR_BASE+'c9e61564-b04d-4e2e-9250-0157d733e8a3.webp','メタング','AR',150,450],
+  ['093',SNKR_BASE+'77e02670-d44a-42d2-837b-fe2a97d46674.webp','ヌメイル','AR',150,450],
+  ['094',SNKR_BASE+'f73537e3-fb9a-46e4-9fc3-808c85b36af5.webp','ケンタロス','AR',200,450],
+  ['095',SNKR_BASE+'386cca20-10e3-478c-b9f9-de235e0c46af.webp','ミルホッグ','AR',150,500],
   // ── 096-113 SR (スーパーレア) ──
-  ['096',null,'スピアーex','SR',400,1200],
-  ['097',null,'メガカエンジシex','SR',200,600],
-  ['098',null,'メガゲッコウガex','SR',2500,3500],
-  ['099',null,'メガフラエッテex','SR',300,600],
-  ['100',null,'パンプジンex','SR',200,600],
-  ['101',null,'コバルオンex','SR',200,600],
-  ['102',null,'メガドラミドロex','SR',300,600],
-  ['103',null,'チラチーノex','SR',200,700],
-  ['104',null,'エネルギー回収','SR',150,350],
-  ['105',null,'ジャンボアイス','SR',100,300],
-  ['106',null,'スペシャルレッドカード','SR',700,1000],
-  ['107',null,'ツールスクラッパー','SR',100,300],
-  ['108',null,'AZの安らぎ','SR',200,500],
-  ['109',null,'ジプソ','SR',200,500],
-  ['110',null,'ホミカの演奏','SR',300,600],
-  ['111',null,'マチエール','SR',700,1000],
-  ['112',null,'なみのりビーチ','SR',150,350],
-  ['113',null,'プリズムタワー','SR',150,300],
+  ['096',SNKR_BASE+'984c2599-06ef-4cfc-9eb5-8ebf41cc9e3a.webp','スピアーex','SR',400,1200],
+  ['097',SNKR_BASE+'cad7ee23-42bc-4747-8a8f-d36e6fd70162.webp','メガカエンジシex','SR',200,600],
+  ['098',SNKR_BASE+'20260312021220-0.webp','メガゲッコウガex','SR',2500,3500],
+  ['099',SNKR_BASE+'7bc3813c-ad13-4d04-bd5d-c97be035c2af.webp','メガフラエッテex','SR',300,600],
+  ['100',SNKR_BASE+'dc865b77-28aa-42a6-b4da-706e1defe046.webp','パンプジンex','SR',200,600],
+  ['101',SNKR_BASE+'5a0a350b-d40d-4563-9e86-58eebbfc396c.webp','コバルオンex','SR',200,600],
+  ['102',SNKR_BASE+'98a8da32-d852-42ed-8121-bfcdfa2c6a4f.webp','メガドラミドロex','SR',300,600],
+  ['103',SNKR_BASE+'fdcb1629-1a11-4319-a8a3-e2b3aa52706a.webp','チラチーノex','SR',200,700],
+  ['104',SNKR_BASE+'a511a525-1e18-417f-894e-84628f52ea0e.webp','エネルギー回収','SR',150,350],
+  ['105',SNKR_BASE+'de76bb2b-93d9-4012-b96f-f436ee0a6f26.webp','ジャンボアイス','SR',100,300],
+  ['106',SNKR_BASE+'d351dbe4-4910-4e53-b674-0b4b02584be3.webp','スペシャルレッドカード','SR',700,1000],
+  ['107',SNKR_BASE+'e24dd60a-38eb-4d84-9cc9-543e3d126da0.webp','ツールスクラッパー','SR',100,300],
+  ['108',SNKR_BASE+'7bc8ae47-1978-4d2c-8033-417b9742b70d.webp','AZの安らぎ','SR',200,500],
+  ['109',SNKR_BASE+'79d3f081-c6a8-4900-8ef4-5340ce48991f.webp','ジプソ','SR',200,500],
+  ['110',SNKR_BASE+'12d9e85c-68ed-4518-bb73-b6424aaa7c40.webp','ホミカの演奏','SR',300,600],
+  ['111',SNKR_BASE+'e5e65074-922d-46e0-99fe-de81f9232c05.webp','マチエール','SR',700,1000],
+  ['112',SNKR_BASE+'868c8c37-42f6-427e-98f6-914a597e286f.webp','なみのりビーチ','SR',150,350],
+  ['113',SNKR_BASE+'27b5e9cb-7999-4cfb-b2e4-019b97f2fbe5.webp','プリズムタワー','SR',150,300],
   // ── 114-119 SAR (スペシャルアートレア) ──
-  ['114',null,'メガゲッコウガex','SAR',50000,45000],
-  ['115',null,'メガフラエッテex','SAR',1800,2700],
-  ['116',null,'メガドラミドロex','SAR',2500,3200],
-  ['117',null,'チラチーノex','SAR',2500,4300],
-  ['118',null,'AZの安らぎ','SAR',900,1400],
-  ['119',null,'ホミカの演奏','SAR',1500,2000],
+  ['114',SNKR_BASE+'e51cbcb5-3be1-4420-ab26-8777703f7c25.webp','メガゲッコウガex','SAR',50000,45000],
+  ['115',SNKR_BASE+'3f756883-1474-4352-a597-b4d116f6945d.webp','メガフラエッテex','SAR',1800,2700],
+  ['116',SNKR_BASE+'cfb4d3c2-5d4f-47ec-9b49-614d906af38b.webp','メガドラミドロex','SAR',2500,3200],
+  ['117',SNKR_BASE+'b6a7128a-e392-41ba-b237-b6f65475a20d.webp','チラチーノex','SAR',2500,4300],
+  ['118',SNKR_BASE+'c511ddb3-da22-4388-a0dc-6083b9c9766b.webp','AZの安らぎ','SAR',900,1400],
+  ['119',SNKR_BASE+'d23a452b-a50c-45d0-9de2-a54c0b6789e7.webp','ホミカの演奏','SAR',1500,2000],
   // ── 120 MUR (メガウルトラレア) ──
-  ['120',null,'メガゲッコウガex','MUR',120000,108000],
+  ['120',SNKR_BASE+'3e8531d4-fcd7-428a-b4ac-bfdf47c55230.webp','メガゲッコウガex','MUR',120000,108000],
 ];
 
 const CARDS = CARDS_RAW.map(([no, file, name, rarity, buy, sell]) => ({
   no, file,
-  img: file ? IMG_BASE + file + '.png' : null,
+  img: file ? (file.startsWith('http') ? file : IMG_BASE + file + '.png') : null,
   name, rarity, buy, sell
 }));
 
