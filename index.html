@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ニンジャスピナー 開封チェッカー</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface2: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --accent: #388bfd;
+  --red: #f85149;
+  --green: #3fb950;
+  --gold: #e3b341;
+  --c-color: #8b949e;
+  --u-color: #3fb950;
+  --r-color: #388bfd;
+  --rr-color: #a371f7;
+  --ar-color: #e3a008;
+  --sr-color: #f85149;
+  --sar-color: #ff7b72;
+  --mur-color: #ffd700;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #0d47a1 100%);
+  padding: 10px 14px 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.set-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+.box-counter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+.box-counter button {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s;
+}
+.box-counter button:active { background: rgba(255,255,255,0.4); }
+.box-count-val { font-size: 14px; font-weight: 700; color: #fff; min-width: 20px; text-align: center; }
+.box-label { font-size: 11px; color: rgba(255,255,255,0.7); }
+
+/* STATS BAR */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.stat {
+  padding: 8px 4px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.stat:last-child { border-right: none; }
+.stat-value { display: block; font-size: 15px; font-weight: 700; color: var(--text); }
+.stat-label { display: block; font-size: 10px; color: var(--text2); margin-top: 1px; }
+#statValue { color: var(--gold); }
+
+/* PROGRESS BAR */
+.progress-wrap {
+  background: var(--surface);
+  padding: 0 14px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.progress-bar {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #388bfd, #a371f7);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* CONTROLS */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 88px;
+  z-index: 90;
+  overflow-x: auto;
+}
+.filter-tabs { display: flex; gap: 4px; flex-shrink: 0; }
+.filter-btn {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.filter-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.sort-select {
+  margin-left: auto;
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* SECTION LABEL */
+.section-label {
+  padding: 8px 14px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text2);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* CARD GRID */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 4px;
+}
+@media (min-width: 400px) {
+  .card-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 540px) {
+  .card-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+/* CARD ITEM */
+.card-item {
+  position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface2);
+  aspect-ratio: 63/88;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.card-item:active { transform: scale(0.96); }
+.card-item.has-card { border-color: rgba(56,139,253,0.4); }
+.card-item.rarity-RR { border-color: rgba(163,113,247,0.3); }
+.card-item.rarity-AR { border-color: rgba(227,160,8,0.3); }
+.card-item.rarity-SR { border-color: rgba(248,81,73,0.3); }
+.card-item.rarity-SAR { border-color: rgba(255,123,114,0.3); }
+.card-item.rarity-MUR {
+  border-color: var(--mur-color);
+  box-shadow: 0 0 12px rgba(255,215,0,0.4);
+}
+.card-item.not-obtained { opacity: 0.5; }
+
+.card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  text-align: center;
+  background: linear-gradient(135deg, #1a1f2a, #21262d);
+}
+.placeholder-rarity {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.placeholder-name {
+  font-size: 9px;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.placeholder-no {
+  font-size: 9px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+/* COUNT BADGE */
+.count-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: rgba(248,81,73,0.9);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  line-height: 1;
+  display: none;
+  backdrop-filter: blur(4px);
+}
+.card-item.has-card .count-badge { display: flex; }
+
+/* PRICE BADGE */
+.price-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: rgba(227,179,65,0.92);
+  color: #000;
+  font-size: 9px;
+  font-weight: 800;
+  border-radius: 4px;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+/* RARITY BADGE (small, top-right) */
+.rarity-pip {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 8px;
+  font-weight: 800;
+  background: rgba(0,0,0,0.7);
+  border-radius: 3px;
+  padding: 2px 3px;
+  line-height: 1;
+}
+.rarity-pip.C { color: var(--c-color); }
+.rarity-pip.U { color: var(--u-color); }
+.rarity-pip.R { color: var(--r-color); }
+.rarity-pip.RR { color: var(--rr-color); }
+.rarity-pip.AR { color: var(--ar-color); }
+.rarity-pip.SR { color: var(--sr-color); }
+.rarity-pip.SAR { color: var(--sar-color); }
+.rarity-pip.MUR { color: var(--mur-color); }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal-sheet {
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 480px;
+  padding: 16px 20px 40px;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+.modal-handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.modal-inner {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.modal-card-wrap {
+  flex-shrink: 0;
+  width: 110px;
+}
+.modal-card-wrap img {
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.modal-card-wrap .card-img-placeholder {
+  width: 110px;
+  height: 155px;
+  border-radius: 8px;
+}
+.modal-details { flex: 1; min-width: 0; }
+.modal-rarity-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.modal-rarity-badge.C { background: rgba(139,148,158,0.2); color: var(--c-color); }
+.modal-rarity-badge.U { background: rgba(63,185,80,0.2); color: var(--u-color); }
+.modal-rarity-badge.R { background: rgba(56,139,253,0.2); color: var(--r-color); }
+.modal-rarity-badge.RR { background: rgba(163,113,247,0.2); color: var(--rr-color); }
+.modal-rarity-badge.AR { background: rgba(227,160,8,0.2); color: var(--ar-color); }
+.modal-rarity-badge.SR { background: rgba(248,81,73,0.2); color: var(--sr-color); }
+.modal-rarity-badge.SAR { background: rgba(255,123,114,0.2); color: var(--sar-color); }
+.modal-rarity-badge.MUR { background: rgba(255,215,0,0.15); color: var(--mur-color); }
+
+.modal-name {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  word-break: break-all;
+}
+.modal-no {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 16px;
+}
+
+/* COUNT CONTROL */
+.count-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface2);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.count-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+.count-btn:active { background: var(--border); }
+.count-btn.minus { color: var(--red); }
+.count-btn.plus { color: var(--green); }
+.count-display {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 800;
+}
+.count-unit { font-size: 14px; font-weight: 400; color: var(--text2); }
+
+/* PRICES */
+.price-section {
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+.price-section-title {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.price-rows { margin-bottom: 12px; }
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+}
+.price-row + .price-row { border-top: 1px solid var(--border); }
+.price-label { font-size: 13px; color: var(--text2); }
+.price-val {
+  font-size: 15px;
+  font-weight: 700;
+}
+.price-val.buy { color: var(--gold); }
+.price-val.sell { color: var(--green); }
+.price-val.none { color: var(--text2); }
+.snkrdunk-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--accent);
+  font-size: 12px;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(56,139,253,0.3);
+  transition: background 0.1s;
+}
+.snkrdunk-link:active { background: rgba(56,139,253,0.1); }
+
+/* RESET BUTTON */
+.fab-reset {
+  position: fixed;
+  bottom: 20px;
+  right: 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 150;
+}
+.fab-reset:active { background: var(--border); }
+
+/* EMPTY STATE */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text2);
+  font-size: 14px;
+}
+
+/* MUR CARD SPECIAL */
+.card-item.rarity-MUR .card-img-placeholder {
+  background: linear-gradient(135deg, #2a1a00, #3d2800, #2a1a00);
+  animation: murGlow 2s ease-in-out infinite alternate;
+}
+@keyframes murGlow {
+  from { box-shadow: inset 0 0 20px rgba(255,215,0,0.1); }
+  to { box-shadow: inset 0 0 30px rgba(255,215,0,0.3); }
+}
+
+/* SAR CARD SPECIAL */
+.card-item.rarity-SAR .card-img-placeholder {
+  background: linear-gradient(135deg, #2a0a0a, #3d1a1a);
+}
+
+/* LOADING */
+.card-img { transition: opacity 0.2s; }
+.card-img[src=""] { opacity: 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="set-title">⚡ ニンジャスピナー 開封チェッカー</div>
+    <div class="box-counter">
+      <button onclick="adjustBoxes(-1)">−</button>
+      <span class="box-count-val" id="boxCount">0</span>
+      <span class="box-label">箱</span>
+      <button onclick="adjustBoxes(1)">＋</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="stat-value" id="statTotal">0</span>
+      <span class="stat-label">総枚数</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="statUnique">0/120</span>
+      <span class="stat-label">種類</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="statPct">0%</span>
+      <span class="stat-label">コンプ率</span>
+    </div>
+    <div class="stat">
+      <span class="stat-value" id="statValue" style="color:var(--gold)">¥0</span>
+      <span class="stat-label">推定価値</span>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="filter-tabs">
+    <button class="filter-btn active" onclick="setFilter('all',this)">すべて</button>
+    <button class="filter-btn" onclick="setFilter('have',this)">入手済み</button>
+    <button class="filter-btn" onclick="setFilter('missing',this)">未入手</button>
+  </div>
+  <select class="sort-select" id="sortBy" onchange="setSort(this.value)">
+    <option value="no">No.順</option>
+    <option value="rarity">レアリティ順</option>
+    <option value="count">枚数順</option>
+    <option value="value">価値順</option>
+  </select>
+</div>
+
+<div id="cardGrid" class="card-grid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div class="modal-inner">
+      <div class="modal-card-wrap" id="modalCardWrap">
+        <img id="modalImg" src="" alt="" loading="lazy">
+      </div>
+      <div class="modal-details">
+        <span class="modal-rarity-badge" id="modalRarityBadge">R</span>
+        <div class="modal-name" id="modalName">カード名</div>
+        <div class="modal-no" id="modalNo">000/083</div>
+        <div class="count-control">
+          <button class="count-btn minus" onclick="adjustCount(-1)">−</button>
+          <div class="count-display">
+            <span id="modalCount">0</span><span class="count-unit">枚</span>
+          </div>
+          <button class="count-btn plus" onclick="adjustCount(+1)">＋</button>
+        </div>
+      </div>
+    </div>
+    <div class="price-section" id="priceSection">
+      <div class="price-section-title">買取・販売相場 (snkrdunk調べ)</div>
+      <div class="price-rows">
+        <div class="price-row">
+          <span class="price-label">買取相場</span>
+          <span class="price-val buy" id="modalBuy">-</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">販売相場</span>
+          <span class="price-val sell" id="modalSell">-</span>
+        </div>
+      </div>
+      <a href="https://snkrdunk.com/articles/30625/" target="_blank" class="snkrdunk-link">
+        snkrdunkで最新相場を確認 ↗
+      </a>
+    </div>
+  </div>
+</div>
+
+<button class="fab-reset" onclick="confirmReset()">↺ リセット</button>
+
+<script>
+// ─────────────────────────────
+// CARD DATA
+// ─────────────────────────────
+const IMG_BASE = 'https://www.pokemon-card.com/ex/m4/assets/images/card/';
+const RARITY_ORDER = { MUR:0, SAR:1, SR:2, AR:3, RR:4, R:5, U:6, C:7 };
+
+// Format: [no, file, name, rarity, buyPrice, sellPrice]
+// buy/sell = 0 means no price listed
+const CARDS_RAW = [
+  // ── 001-083 BASE SET ──
+  ['001','001-m4mafg9','ビードル','C',0,30],
+  ['002','002-m44briw','コクーン','C',0,30],
+  ['003','003-m4xerx3','マスキッパ','C',0,30],
+  ['004','004-m4spnx7','スピアーex','RR',0,200],
+  ['005','005-m4rg68y','ハリマロン','C',0,30],
+  ['006','006-m4h4gza','ハリボーグ','C',0,30],
+  ['007','007-m4yet9u','ブリガロン','R',0,30],
+  ['008','008-m4k3enp','ロコン','C',0,30],
+  ['009','009-m4tea4a','キュウコン','U',0,30],
+  ['010','010-m4bx3bs','ホウオウ','U',0,30],
+  ['011','011-m49h85l','フォッコ','C',0,30],
+  ['012','012-m4hxwhz','テールナー','C',0,30],
+  ['013','013-m4zdrnx','マフォクシー','R',0,30],
+  ['014','014-m4djdd9','シシコ','C',0,30],
+  ['015','015-m4zak9b','メガカエンジシex','RR',0,80],
+  ['016','016-m4f2mdx','テッポウオ','C',0,30],
+  ['017','017-m48jr5b','オクタン','C',0,30],
+  ['018','018-m4bj8sw','デリバード','U',0,30],
+  ['019','019-m4nyuix','ケルディオ','U',0,30],
+  ['020','020-m4fz9nc','ケロマツ','C',400,900],
+  ['021','021-m4gdx0n','ゲコガシラ','C',400,600],
+  ['022','022-m4ey7cf','メガゲッコウガex','RR',300,700],
+  ['023','023-m4rbyis','カチコール','C',0,30],
+  ['024','024-m4sja34','クレベース','U',0,30],
+  ['025','025-m4j26u6','コソクムシ','C',0,30],
+  ['026','026-m4szkgr','グソクムシャ','U',0,30],
+  ['027','027-m43xkjc','メリープ','C',0,30],
+  ['028','028-m432e5u','モコモコ','C',0,30],
+  ['029','029-m4aes4e','デンリュウ','R',0,30],
+  ['030','030-m4ga6ab','エモンガ','C',0,30],
+  ['031','031-m4g46mb','デオキシス(ノーマル)','U',0,30],
+  ['032','032-m4ps9it','デオキシス(アタック)','U',0,30],
+  ['033','033-m45mufb','デオキシス(ディフェンス)','U',0,30],
+  ['034','034-m4wstk4','デオキシス(スピード)','U',0,30],
+  ['035','035-m4dksea','メガフラエッテex','RR',0,80],
+  ['036','036-m4ch6ec','ニャスパー','C',0,30],
+  ['037','037-m47b9bz','ニャオニクス','U',0,30],
+  ['038','038-m477ehp','ボクレー','C',0,50],
+  ['039','039-m43djcy','オーロット','R',0,30],
+  ['040','040-m4pmufu','バケッチャ','C',0,50],
+  ['041','041-m4bjj8f','パンプジンex','RR',0,80],
+  ['042','042-m4bp7gy','ゼルネアス','R',400,500],
+  ['043','043-m494u3i','ゴマゾウ','C',0,30],
+  ['044','044-m4ju8fi','ドンファン','C',0,30],
+  ['045','045-m427rek','ヤジロン','C',0,30],
+  ['046','046-m4hin3c','ネンドール','U',0,30],
+  ['047','047-m4ppkh9','ケンタロス','U',200,450],
+  ['048','048-m4k8kn5','ウソッキー','U',0,30],
+  ['049','049-m4362kg','ズバット','C',0,30],
+  ['050','050-m4a9wfx','ゴルバット','C',0,30],
+  ['051','051-m4bir1a','クロバット','U',150,500],
+  ['052','052-m44ft68','ハリーセン','C',0,30],
+  ['053','053-m4jcnya','スカンプー','C',0,30],
+  ['054','054-m4434wt','スカタンク','U',0,30],
+  ['055','055-m437b48','ヤブクロン','C',0,30],
+  ['056','056-m43t5f7','ダストダス','U',0,30],
+  ['057','057-m45na9p','クズモー','C',0,30],
+  ['058','058-m4wkjxk','メガドラミドロex','RR',0,80],
+  ['059','059-m456uii','ダンバル','C',0,30],
+  ['060','060-m4fhrse','メタング','C',150,450],
+  ['061','061-m4grxw7','メタグロス','U',0,30],
+  ['062','062-m4z4iff','コバルオンex','RR',0,80],
+  ['063','063-m4pniis','テッシード','C',0,30],
+  ['064','064-m454zew','ナットレイ','U',0,30],
+  ['065','065-m4ixh3u','ヌメラ','C',0,30],
+  ['066','066-m46uz6i','ヌメイル','C',150,450],
+  ['067','067-m4pith3','ヌメルゴン','U',0,30],
+  ['068','068-m4gd4wk','チラチーノex','RR',0,80],
+  ['069','069-m4y2g75','ミネズミ','C',0,150],
+  ['070','070-m4kxrzz','ミルホッグ','C',150,500],
+  ['071','071-m46dyda','チラーミィ','C',0,30],
+  ['072','072-m4weki2','ニトロ炎エネルギー','R',0,30],
+  ['073','073-m428c2t','大漁ネット','U',0,30],
+  ['074','074-m4hp6rc','スペシャルレッドカード','U',700,1000],
+  ['075','075-m4ujgu3','AZの安らぎ','U',0,30],
+  ['076','076-m475p2o','ジプソ','U',200,500],
+  ['077','077-m4fj5ex','ホミカの演奏','U',0,30],
+  ['078','078-m4ziyt4','マチエール','U',700,1000],
+  ['079','079-m4sanuc','アンジュフラエッテ','U',0,30],
+  ['080','080-m4k5h26','プリズムタワー','U',0,30],
+  ['081','081-m4e3ntb','変化の書','U',0,30],
+  ['082','082-m423k3p','バブル水エネルギー','R',0,30],
+  ['083','083-m4k0f66','マグネット鋼エネルギー','R',0,30],
+  // ── 084-095 AR (アートレア) ──
+  ['084',null,'ハリマロン','AR',200,500],
+  ['085',null,'フォッコ','AR',300,500],
+  ['086',null,'ケロマツ','AR',400,900],
+  ['087',null,'ゲコガシラ','AR',400,600],
+  ['088',null,'デンリュウ','AR',600,500],
+  ['089',null,'ゼルネアス','AR',400,500],
+  ['090',null,'ネンドール','AR',150,500],
+  ['091',null,'クロバット','AR',150,500],
+  ['092',null,'メタング','AR',150,450],
+  ['093',null,'ヌメイル','AR',150,450],
+  ['094',null,'ケンタロス','AR',200,450],
+  ['095',null,'ミルホッグ','AR',150,500],
+  // ── 096-113 SR (スーパーレア) ──
+  ['096',null,'スピアーex','SR',400,1200],
+  ['097',null,'メガカエンジシex','SR',200,600],
+  ['098',null,'メガゲッコウガex','SR',2500,3500],
+  ['099',null,'メガフラエッテex','SR',300,600],
+  ['100',null,'パンプジンex','SR',200,600],
+  ['101',null,'コバルオンex','SR',200,600],
+  ['102',null,'メガドラミドロex','SR',300,600],
+  ['103',null,'チラチーノex','SR',200,700],
+  ['104',null,'エネルギー回収','SR',150,350],
+  ['105',null,'ジャンボアイス','SR',100,300],
+  ['106',null,'スペシャルレッドカード','SR',700,1000],
+  ['107',null,'ツールスクラッパー','SR',100,300],
+  ['108',null,'AZの安らぎ','SR',200,500],
+  ['109',null,'ジプソ','SR',200,500],
+  ['110',null,'ホミカの演奏','SR',300,600],
+  ['111',null,'マチエール','SR',700,1000],
+  ['112',null,'なみのりビーチ','SR',150,350],
+  ['113',null,'プリズムタワー','SR',150,300],
+  // ── 114-119 SAR (スペシャルアートレア) ──
+  ['114',null,'メガゲッコウガex','SAR',50000,45000],
+  ['115',null,'メガフラエッテex','SAR',1800,2700],
+  ['116',null,'メガドラミドロex','SAR',2500,3200],
+  ['117',null,'チラチーノex','SAR',2500,4300],
+  ['118',null,'AZの安らぎ','SAR',900,1400],
+  ['119',null,'ホミカの演奏','SAR',1500,2000],
+  // ── 120 MUR (メガウルトラレア) ──
+  ['120',null,'メガゲッコウガex','MUR',120000,108000],
+];
+
+const CARDS = CARDS_RAW.map(([no, file, name, rarity, buy, sell]) => ({
+  no, file,
+  img: file ? IMG_BASE + file + '.png' : null,
+  name, rarity, buy, sell
+}));
+
+const TOTAL = CARDS.length; // 120
+
+// ─────────────────────────────
+// STATE
+// ─────────────────────────────
+let state = { counts: {}, boxes: 0, filter: 'all', sort: 'no' };
+let currentCardNo = null;
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('ninjaSpinner_v1');
+    if (s) state = { ...state, ...JSON.parse(s) };
+  } catch(e) {}
+}
+
+function saveState() {
+  localStorage.setItem('ninjaSpinner_v1', JSON.stringify(state));
+}
+
+// ─────────────────────────────
+// HELPERS
+// ─────────────────────────────
+function fmtPrice(yen) {
+  if (!yen || yen === 0) return null;
+  if (yen >= 10000) return '¥' + (yen/10000).toFixed(yen%10000===0?0:1) + '万';
+  return '¥' + yen.toLocaleString();
+}
+
+function getRarityColor(r) {
+  const colors = { C:'var(--c-color)', U:'var(--u-color)', R:'var(--r-color)',
+    RR:'var(--rr-color)', AR:'var(--ar-color)', SR:'var(--sr-color)',
+    SAR:'var(--sar-color)', MUR:'var(--mur-color)' };
+  return colors[r] || '#fff';
+}
+
+function calcTotalValue() {
+  return CARDS.reduce((sum, c) => {
+    const cnt = state.counts[c.no] || 0;
+    return sum + cnt * (c.sell || 0);
+  }, 0);
+}
+
+// ─────────────────────────────
+// STATS
+// ─────────────────────────────
+function updateStats() {
+  const total = Object.values(state.counts).reduce((a,b) => a+b, 0);
+  const unique = CARDS.filter(c => (state.counts[c.no] || 0) > 0).length;
+  const pct = Math.round(unique / TOTAL * 100);
+  const val = calcTotalValue();
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statUnique').textContent = unique + '/' + TOTAL;
+  document.getElementById('statPct').textContent = pct + '%';
+  document.getElementById('statValue').textContent = fmtPrice(val) || '¥0';
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('boxCount').textContent = state.boxes;
+}
+
+// ─────────────────────────────
+// RENDER CARDS
+// ─────────────────────────────
+function getFilteredSorted() {
+  let cards = [...CARDS];
+
+  // Filter
+  if (state.filter === 'have') cards = cards.filter(c => (state.counts[c.no]||0) > 0);
+  else if (state.filter === 'missing') cards = cards.filter(c => !(state.counts[c.no]||0));
+
+  // Sort
+  if (state.sort === 'rarity') {
+    cards.sort((a,b) => (RARITY_ORDER[a.rarity]||9) - (RARITY_ORDER[b.rarity]||9) || parseInt(a.no) - parseInt(b.no));
+  } else if (state.sort === 'count') {
+    cards.sort((a,b) => (state.counts[b.no]||0) - (state.counts[a.no]||0) || parseInt(a.no) - parseInt(b.no));
+  } else if (state.sort === 'value') {
+    cards.sort((a,b) => b.sell - a.sell || parseInt(a.no) - parseInt(b.no));
+  } else {
+    cards.sort((a,b) => parseInt(a.no) - parseInt(b.no));
+  }
+
+  return cards;
+}
+
+function createCardEl(card) {
+  const count = state.counts[card.no] || 0;
+  const hasCard = count > 0;
+
+  const div = document.createElement('div');
+  div.className = 'card-item rarity-' + card.rarity + (hasCard ? ' has-card' : ' not-obtained');
+  div.dataset.no = card.no;
+  div.onclick = () => openModal(card.no);
+
+  // Card image or placeholder
+  if (card.img) {
+    const img = document.createElement('img');
+    img.className = 'card-img';
+    img.alt = card.name;
+    img.loading = 'lazy';
+    img.src = card.img;
+    img.onerror = () => { img.style.display='none'; createPlaceholderInCard(div, card); };
+    div.appendChild(img);
+  } else {
+    createPlaceholderInCard(div, card);
+  }
+
+  // Rarity pip
+  const pip = document.createElement('span');
+  pip.className = 'rarity-pip ' + card.rarity;
+  pip.textContent = card.rarity;
+  div.appendChild(pip);
+
+  // Price badge (for cards worth ¥500+)
+  if (card.sell >= 500) {
+    const pb = document.createElement('span');
+    pb.className = 'price-badge';
+    pb.textContent = fmtPrice(card.sell);
+    div.appendChild(pb);
+  }
+
+  // Count badge
+  const badge = document.createElement('span');
+  badge.className = 'count-badge';
+  badge.textContent = count;
+  div.appendChild(badge);
+
+  return div;
+}
+
+function createPlaceholderInCard(div, card) {
+  const ph = document.createElement('div');
+  ph.className = 'card-img-placeholder';
+
+  const rSpan = document.createElement('span');
+  rSpan.className = 'placeholder-rarity';
+  rSpan.style.color = getRarityColor(card.rarity);
+  rSpan.textContent = card.rarity;
+
+  const nSpan = document.createElement('span');
+  nSpan.className = 'placeholder-name';
+  nSpan.textContent = card.name;
+
+  const noSpan = document.createElement('span');
+  noSpan.className = 'placeholder-no';
+  noSpan.textContent = card.no + '/083';
+
+  ph.appendChild(rSpan);
+  ph.appendChild(nSpan);
+  ph.appendChild(noSpan);
+  div.appendChild(ph);
+}
+
+function renderGrid() {
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+
+  const cards = getFilteredSorted();
+  if (cards.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = 'カードが見つかりません';
+    grid.appendChild(empty);
+    return;
+  }
+
+  const frag = document.createDocumentFragment();
+  cards.forEach(card => frag.appendChild(createCardEl(card)));
+  grid.appendChild(frag);
+}
+
+// ─────────────────────────────
+// MODAL
+// ─────────────────────────────
+function openModal(no) {
+  const card = CARDS.find(c => c.no === no);
+  if (!card) return;
+  currentCardNo = no;
+
+  const count = state.counts[no] || 0;
+
+  // Image
+  const wrap = document.getElementById('modalCardWrap');
+  wrap.innerHTML = '';
+  if (card.img) {
+    const img = document.createElement('img');
+    img.id = 'modalImg';
+    img.src = card.img;
+    img.alt = card.name;
+    img.loading = 'lazy';
+    img.onerror = () => { img.remove(); createPlaceholderInCard(wrap, card); };
+    wrap.appendChild(img);
+  } else {
+    createPlaceholderInCard(wrap, card);
+  }
+
+  document.getElementById('modalName').textContent = card.name;
+  document.getElementById('modalNo').textContent = card.no + '/083 · ' + card.rarity;
+  document.getElementById('modalCount').textContent = count;
+
+  const badge = document.getElementById('modalRarityBadge');
+  badge.textContent = card.rarity;
+  badge.className = 'modal-rarity-badge ' + card.rarity;
+
+  // Prices
+  document.getElementById('modalBuy').textContent = fmtPrice(card.buy) || '−';
+  document.getElementById('modalBuy').className = 'price-val ' + (card.buy ? 'buy' : 'none');
+  document.getElementById('modalSell').textContent = fmtPrice(card.sell) || '−';
+  document.getElementById('modalSell').className = 'price-val ' + (card.sell ? 'sell' : 'none');
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  currentCardNo = null;
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function adjustCount(delta) {
+  if (!currentCardNo) return;
+  const old = state.counts[currentCardNo] || 0;
+  const newVal = Math.max(0, old + delta);
+  if (newVal === 0) delete state.counts[currentCardNo];
+  else state.counts[currentCardNo] = newVal;
+  document.getElementById('modalCount').textContent = newVal;
+  saveState();
+  updateStats();
+  // Update card in grid
+  const el = document.querySelector(`.card-item[data-no="${currentCardNo}"]`);
+  if (el) {
+    const badge = el.querySelector('.count-badge');
+    if (badge) badge.textContent = newVal;
+    el.classList.toggle('has-card', newVal > 0);
+    el.classList.toggle('not-obtained', newVal === 0);
+  }
+}
+
+// ─────────────────────────────
+// CONTROLS
+// ─────────────────────────────
+function setFilter(f, btn) {
+  state.filter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderGrid();
+}
+
+function setSort(s) {
+  state.sort = s;
+  renderGrid();
+}
+
+function adjustBoxes(delta) {
+  state.boxes = Math.max(0, (state.boxes||0) + delta);
+  document.getElementById('boxCount').textContent = state.boxes;
+  saveState();
+}
+
+function confirmReset() {
+  if (confirm('全てのカウントをリセットしますか？\nこの操作は元に戻せません。')) {
+    state.counts = {};
+    state.boxes = 0;
+    saveState();
+    renderGrid();
+    updateStats();
+    closeModal();
+  }
+}
+
+// ─────────────────────────────
+// SWIPE TO CLOSE MODAL
+// ─────────────────────────────
+let touchStartY = 0;
+document.getElementById('modalSheet').addEventListener('touchstart', e => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.getElementById('modalSheet').addEventListener('touchend', e => {
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (dy > 80) closeModal();
+}, { passive: true });
+
+// ─────────────────────────────
+// INIT
+// ─────────────────────────────
+loadState();
+renderGrid();
+updateStats();
+</script>
+</body>
+</html>
