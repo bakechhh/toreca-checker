@@ -512,6 +512,27 @@ header {
 /* LOADING */
 .card-img { transition: opacity 0.2s; }
 .card-img[src=""] { opacity: 0; }
+
+/* ACTION BUTTONS */
+.action-btns {
+  display: flex;
+  gap: 8px;
+  padding: 0 12px 10px;
+}
+.action-btn {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 12px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.action-btn:active { opacity: 0.6; }
 </style>
 </head>
 <body>
@@ -564,6 +585,13 @@ header {
     <option value="value">価値順</option>
   </select>
 </div>
+
+<div class="action-btns">
+  <button class="action-btn" onclick="exportImage()">📷 画像保存</button>
+  <button class="action-btn" onclick="exportData()">💾 書き出し</button>
+  <button class="action-btn" onclick="document.getElementById('importInput').click()">📂 読み込み</button>
+</div>
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
 
 <div id="cardGrid" class="card-grid"></div>
 
@@ -1038,6 +1066,127 @@ document.getElementById('modalSheet').addEventListener('touchend', e => {
   const dy = e.changedTouches[0].clientY - touchStartY;
   if (dy > 80) closeModal();
 }, { passive: true });
+
+// ─────────────────────────────
+// IMAGE EXPORT
+// ─────────────────────────────
+function exportImage() {
+  const COLS = 10, ROWS = 12, CELL = 54, PAD = 14, HEADER = 88;
+  const W = COLS * CELL + PAD * 2;
+  const H = ROWS * CELL + HEADER + PAD;
+  const DPR = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = W * DPR;
+  canvas.height = H * DPR;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  const RC = { C:'#8b949e', U:'#3fb950', R:'#388bfd', RR:'#a371f7', AR:'#e3a008', SR:'#f85149', SAR:'#ff7b72', MUR:'#ffd700' };
+
+  // Background
+  ctx.fillStyle = '#0d1117';
+  ctx.fillRect(0, 0, W, H);
+
+  // Title
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = 'bold 15px -apple-system, sans-serif';
+  ctx.fillText('⚡ ニンジャスピナー 開封チェッカー', PAD, 22);
+
+  // Stats
+  const unique = CARDS.filter(c => (state.counts[c.no]||0) > 0).length;
+  const total = CARDS.reduce((s,c) => s + (state.counts[c.no]||0), 0);
+  const pct = Math.round(unique / TOTAL * 100);
+  const val = CARDS.reduce((s,c) => s + (state.counts[c.no]||0) * (c.sell||0), 0);
+  ctx.font = '12px -apple-system, sans-serif';
+  ctx.fillStyle = '#8b949e';
+  ctx.fillText(`総枚数 ${total}枚  種類 ${unique}/${TOTAL}  コンプ率 ${pct}%`, PAD, 44);
+  ctx.fillText(`推定価値 ${fmtPrice(val)||'¥0'}  開封 ${state.boxes||0}箱`, PAD, 62);
+
+  // Date
+  ctx.textAlign = 'right';
+  ctx.fillText(new Date().toLocaleDateString('ja-JP'), W - PAD, 62);
+  ctx.textAlign = 'left';
+
+  // Grid
+  CARDS.forEach((card, i) => {
+    const col = i % COLS;
+    const row = Math.floor(i / COLS);
+    const x = PAD + col * CELL;
+    const y = HEADER + row * CELL;
+    const cnt = state.counts[card.no] || 0;
+    const color = RC[card.rarity] || '#30363d';
+
+    ctx.fillStyle = cnt > 0 ? '#161b22' : '#0a0e13';
+    ctx.beginPath();
+    ctx.roundRect(x+1, y+1, CELL-2, CELL-2, 4);
+    ctx.fill();
+
+    ctx.strokeStyle = cnt > 0 ? color : '#21262d';
+    ctx.lineWidth = cnt > 0 ? 1.5 : 0.5;
+    ctx.beginPath();
+    ctx.roundRect(x+1, y+1, CELL-2, CELL-2, 4);
+    ctx.stroke();
+
+    ctx.textAlign = 'center';
+    ctx.fillStyle = cnt > 0 ? '#e6edf3' : '#30363d';
+    ctx.font = `${cnt > 0 ? 'bold ' : ''}10px monospace`;
+    ctx.fillText(card.no, x + CELL/2, y + CELL/2 - 3);
+
+    if (cnt > 0) {
+      ctx.fillStyle = color;
+      ctx.font = 'bold 13px -apple-system, sans-serif';
+      ctx.fillText('×' + cnt, x + CELL/2, y + CELL/2 + 12);
+    }
+    ctx.textAlign = 'left';
+  });
+
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ninja-spinner-' + new Date().toISOString().slice(0,10) + '.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+// ─────────────────────────────
+// DATA EXPORT / IMPORT
+// ─────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ninja-spinner-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (imported && imported.counts) {
+        state = { ...state, ...imported };
+        saveState();
+        renderGrid();
+        updateStats();
+        document.getElementById('boxCount').textContent = state.boxes || 0;
+        alert('データを読み込みました');
+      } else {
+        alert('無効なファイルです');
+      }
+    } catch(_) {
+      alert('読み込みに失敗しました');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
 
 // ─────────────────────────────
 // INIT
